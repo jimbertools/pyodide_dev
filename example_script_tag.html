@@ -1,0 +1,58 @@
+
+<!-- Bootstrap HTML for running the unit tests. -->
+<html>
+    <head>
+        <meta charset="utf-8"/>
+     
+        <script src="pyodide_dev.js"></script>
+<script type="text/python">
+from collections.abc import MutableMapping
+
+class D(MutableMapping):
+    '''
+    Mapping that works like both a dict and a mutable object, i.e.
+    d = D(foo='bar')
+    and 
+    d.foo returns 'bar'
+    '''
+    # ``__init__`` method required to create instance from class.
+    def __init__(self, *args, **kwargs):
+        '''Use the object dict'''
+        self.__dict__.update(*args, **kwargs)
+    # The next five methods are requirements of the ABC.
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+    def __getitem__(self, key):
+        return self.__dict__[key]
+    def __delitem__(self, key):
+        del self.__dict__[key]
+    def __iter__(self):
+        return iter(self.__dict__)
+    def __len__(self):
+        return len(self.__dict__)
+    # The final two methods aren't required, but nice for demo purposes:
+    def __str__(self):
+        '''returns simple dict representation of the mapping'''
+        return str(self.__dict__)
+    def __repr__(self):
+        '''echoes class, id, & reproducible representation in the REPL'''
+        return '{}, D({})'.format(super(D, self).__repr__(), 
+                                  self.__dict__)
+d = D((e, i) for i, e in enumerate('abc'))
+d.get('b')
+</script>
+
+	<script>
+
+languagePluginLoader.then(() => {
+		var scripts = document.querySelectorAll('script[type="text/python"]')
+		for(const script of scripts){
+			console.log(pyodide.runPython(script.text))
+		}
+
+
+});
+	</script>
+    </head>
+    <body></body>
+</html>

@@ -1,0 +1,162 @@
+<!-- Bootstrap HTML for running the unit tests. -->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+
+
+
+    <style type="text/css" media="screen">
+    #bar{
+        position: absolute;
+        background-color: #272822;
+        top:0;
+        left: 0;
+        height: 60px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+    }
+        #editor { 
+            position: absolute;
+            top: 60;
+            bottom: 0;
+            left: 0;
+            width:50%;
+        }
+        #result{
+            position:absolute;
+            top:60;
+            right: 0;
+            bottom: 0;
+            width:50%;
+            background-color: #272822;
+            color: white;
+            padding-left: 20px;
+            border-left:  2px solid white;
+
+
+
+
+        }
+        button {
+            position: absolute;
+            top:5px;
+            left: 50px;
+            background-image: url(start.png);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  /* put the height and width of your image here */
+  height: 50px;
+  width: 50px;
+  background-size: 50px 50px;
+  background-color:  #272822;
+  border: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+<div id="bar">
+
+    <button onclick="run()"> </button>
+</div>
+    <div id="editor">
+from collections.abc import MutableMapping
+
+print("python executing")
+class D(MutableMapping):
+    '''
+    Mapping that works like both a dict and a mutable object, i.e.
+    d = D(foo='bar')
+    and 
+    d.foo returns 'bar'
+    '''
+    # ``__init__`` method required to create instance from class.
+    def __init__(self, *args, **kwargs):
+        '''Use the object dict'''
+        self.__dict__.update(*args, **kwargs)
+    # The next five methods are requirements of the ABC.
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+    def __getitem__(self, key):
+        return self.__dict__[key]
+    def __delitem__(self, key):
+        del self.__dict__[key]
+    def __iter__(self):
+        return iter(self.__dict__)
+    def __len__(self):
+        return len(self.__dict__)
+    # The final two methods aren't required, but nice for demo purposes:
+    def __str__(self):
+        '''returns simple dict representation of the mapping'''
+        return str(self.__dict__)
+    def __repr__(self):
+        '''echoes class, id, & reproducible representation in the REPL'''
+        return '{}, D({})'.format(super(D, self).__repr__(), 
+                                    self.__dict__)
+d = D((e, i) for i, e in enumerate('abc'))
+d.get('b')
+print("yo hello")
+    </div>
+    <div id="result"></div>
+
+    <script>
+        var result = document.getElementById("result");;
+       
+         console.log = function(message) {
+             result.innerText += "\n" +  new Date().toLocaleTimeString() + "\ \ \ - \ " + message;
+         }
+         console.warn = function(message) {
+            result.innerText +=  message;
+         }
+         console.info = function(message) {
+            result.innerText +=  message;
+         }
+         console.error = function(message) {
+            result.innerText +=  message;
+         }
+        
+    </script>
+
+    <script src="pyodide_dev.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"></script>
+
+
+    <script>
+
+        
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/python");
+
+
+
+        languagePluginLoader.then(() => {
+           
+        
+
+
+        });
+
+
+        function run(){
+            var editor = ace.edit("editor");
+            var code = editor.getValue();
+            result.innerText +=  "\n>>> ";
+            pyodide.runPython(code)
+        }
+    </script>
+
+
+
+</body>
+
+</html>
